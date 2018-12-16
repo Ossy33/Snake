@@ -3,12 +3,31 @@ package dev.ossy.snake;
 import dev.ossy.snake.entities.food.Food;
 import dev.ossy.snake.entities.snake.Snake;
 import dev.ossy.snake.display.Display;
+import dev.ossy.snake.states.GameState;
+import dev.ossy.snake.states.State;
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class Game implements Runnable{
 
 	public String title;
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
 
 	private int width, height;
 
@@ -19,19 +38,19 @@ public class Game implements Runnable{
 	private BufferStrategy bs;
 	private Graphics g;
 
-	private Snake snake;
-	private Food food;
 
+	private GameState state;
+	private Handler handler;
 	public Game(String title, int width, int height){
 		this.title = title;
 		this.width = width;
 		this.height = height;
-		snake = new Snake( 200, 400, 10);
-		food = new Food(width, height, 10);
+		handler = new Handler();
+		state = new GameState(width, height, handler);
 	}
 
 	private void tick(){
-		snake.tick();
+		state.tick();
 	}
 
 	private void init() {
@@ -40,7 +59,7 @@ public class Game implements Runnable{
 
 
 
-		display.getFrame().addKeyListener(snake.getKeyManager());
+		display.getFrame().addKeyListener(handler.getKeyManager());
 	}
 
 	private void render() {
@@ -53,8 +72,7 @@ public class Game implements Runnable{
 		//Clear Screen
 		g.clearRect(0, 0, width, height);
 		//Draw Here!
-		snake.render(g);
-		food.render(g);
+		state.render(g);
 
 
 		bs.show();
@@ -114,7 +132,7 @@ public class Game implements Runnable{
 				render();
 
 				if (ticks % 20 == 0) {
-					snake.move();
+					state.getSnake().move();
 				}
 
 				ticks++;

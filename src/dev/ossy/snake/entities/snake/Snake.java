@@ -1,5 +1,6 @@
 package dev.ossy.snake.entities.snake;
 
+import dev.ossy.snake.Handler;
 import dev.ossy.snake.input.KeyManager;
 
 import java.awt.*;
@@ -10,55 +11,58 @@ public class Snake {
 
 	private Head head;
 	private Tail tail;
-	private int width;
+	private int resolution;
 	private int x, y;
 
 
 	private int direction;
+	private int nextDirection;
+	private Handler handler;
 
-	private KeyManager keyManager;
-
-	public Snake(int x, int y, int width){
-		this.width = width;
+	public Snake(int x, int y, int resolution, Handler handler){
+		this.resolution = resolution;
 		this.x = x;
 		this.y = y;
-		head = new Head(x, y, this.width);
-		tail = new Tail(x ,y + width, this.width);
+		head = new Head(x, y, this.resolution);
+		tail = new Tail(x ,y + resolution, this.resolution);
 		direction = NORTH;
-
-		keyManager = new KeyManager();
+		this.handler = handler;
 	}
 
 	public void tick(){
-		keyManager.tick();
+		handler.getKeyManager().tick();
 
-		if (keyManager.down){
-			direction = SOUTH;
-		}else if (keyManager.left){
-			direction = WEST;
-		}else if (keyManager.right){
-			direction = EAST;
-		}else if (keyManager.up){
-			direction = NORTH;
+		if (handler.getKeyManager().down && direction != NORTH){
+			nextDirection = SOUTH;
+		}else if (handler.getKeyManager().left && direction != EAST){
+			nextDirection = WEST;
+		}else if (handler.getKeyManager().right && direction != WEST){
+			nextDirection = EAST;
+		}else if (handler.getKeyManager().up && direction != SOUTH){
+			nextDirection = NORTH;
 		}
+
 	}
 
 	public void move(){
+		if (nextDirection != direction && nextDirection != 0){
+			direction = nextDirection;
+		}
 
 		tail.move(x, y);
 
 		switch (direction){
 			case NORTH:
-				y -= width;
+				y -= resolution;
 				break;
 			case SOUTH:
-				y += width;
+				y += resolution;
 				break;
 			case WEST:
-				this.x -= width;
+				this.x -= resolution;
 				break;
 			case EAST:
-				this.x += width;
+				this.x += resolution;
 				break;
 		}
 
@@ -76,10 +80,6 @@ public class Snake {
 
 	public void setDirection(int direction){
 		this.direction = direction;
-	}
-
-	public KeyManager getKeyManager(){
-		return keyManager;
 	}
 
 }
