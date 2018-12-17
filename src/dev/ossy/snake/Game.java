@@ -46,6 +46,7 @@ public class Game implements Runnable{
 		this.width = width;
 		this.height = height;
 		handler = new Handler();
+		handler.setGame(this);
 		state = new GameState(width, height, handler);
 	}
 
@@ -57,6 +58,7 @@ public class Game implements Runnable{
 		display = new Display(title, width, height);
 		//Allows us to use the keyboard.
 
+		state.init();
 
 
 		display.getFrame().addKeyListener(handler.getKeyManager());
@@ -131,7 +133,7 @@ public class Game implements Runnable{
 				tick();
 				render();
 
-				if (ticks % 20 == 0) {
+				if (ticks % 5 == 0) {
 					state.getSnake().move();
 				}
 

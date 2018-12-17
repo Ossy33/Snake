@@ -28,8 +28,8 @@ public class Food {
 	}
 
 	public void newLocation(){
-		x = rand.nextInt(maxX);
-		y = rand.nextInt(maxY);
+		x = rand.nextInt(maxX) * resolution;
+		y = rand.nextInt(maxY) * resolution;
 	}
 
 	public void render(Graphics g){

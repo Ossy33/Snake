@@ -14,10 +14,13 @@ public class Snake {
 	private int resolution;
 	private int x, y;
 
+	private int height, width;
 
 	private int direction;
 	private int nextDirection;
 	private Handler handler;
+
+	private boolean increaseSize;
 
 	public Snake(int x, int y, int resolution, Handler handler){
 		this.resolution = resolution;
@@ -27,6 +30,9 @@ public class Snake {
 		tail = new Tail(x ,y + resolution, this.resolution);
 		direction = NORTH;
 		this.handler = handler;
+
+		this.height = handler.getGame().getHeight();
+		this.width = handler.getGame().getWidth();
 	}
 
 	public void tick(){
@@ -45,24 +51,30 @@ public class Snake {
 	}
 
 	public void move(){
+		if (!increaseSize){
+			tail.move(x, y);
+		}else {
+			tail.addBodyPiece(x, y);
+			increaseSize = false;
+		}
+
 		if (nextDirection != direction && nextDirection != 0){
 			direction = nextDirection;
 		}
 
-		tail.move(x, y);
 
 		switch (direction){
 			case NORTH:
-				y -= resolution;
+				y = (y - resolution + height) % height;
 				break;
 			case SOUTH:
-				y += resolution;
+				y = (y + resolution + height) % height;
 				break;
 			case WEST:
-				this.x -= resolution;
+				x = (x - resolution + width) % width;
 				break;
 			case EAST:
-				this.x += resolution;
+				x = (x + resolution + width) % width;
 				break;
 		}
 
@@ -74,6 +86,15 @@ public class Snake {
 		tail.render(g);
 	}
 
+	public boolean hasCrashed(){
+		for (BodyPiece i : tail.getBodyPieces()){
+			if (i.getY() == head.getY() && i.getX() == head.getX()){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public int getDirection(){
 		return direction;
 	}
@@ -82,4 +103,15 @@ public class Snake {
 		this.direction = direction;
 	}
 
+	public int getX(){
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void increaseLength() {
+		increaseSize = true;
+	}
 }

@@ -13,13 +13,17 @@ public class Tail {
 	protected Tail(int x, int y, int width){
 		this.x = x;
 		this.y = y;
+		this.width = width;
 		bodyPieces = new ArrayList<BodyPiece>();
 		bodyPieces.add(new BodyPiece(x, y + width, width));
 		bodyPieces.add(new BodyPiece(x, y, width));
 	}
 
+	public ArrayList<BodyPiece> getBodyPieces(){
+		return bodyPieces;
+	}
 
-	public BodyPiece getPeice(int i){
+	public BodyPiece getPiece(int i){
 		return bodyPieces.get(i);
 	}
 
